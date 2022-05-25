@@ -1,7 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 18 22:52:34 2022
+
+@author: busrasebin
+"""
+
 
 # Run in the terminal :
 # % pip install scrapy
-# % scrapy startproject scrapingproject
+# % scrapy startproject scrapingprojecttoday
 
 
 import scrapy
@@ -15,32 +23,48 @@ class ReviewspiderSpider(scrapy.Spider):
     # Domain names to scrape
     allowed_domains = ['amazon.com.tr']
     
-    myBaseUrl = "https://www.amazon.com.tr/Apple-Telefon-Kulakl%C4%B1k-Adapt%C3%B6r-Garantili/product-reviews/B08PQ1JPX9/ref=cm_cr_getr_d_paging_btm_prev_2?ie=UTF8&reviewerType=all_reviews&pageNumber="
+    myUrls = ["https://www.amazon.com.tr/LIPTON-YELLOW-LABEL-TPB-16X153G/product-reviews/B07K27H8X3/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Atomik-Al%C4%B1%C5%9Fkanl%C4%B1klar-James-Clear/product-reviews/6052998385/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Gece-Yar%C4%B1s%C4%B1-K%C3%BCt%C3%BCphanesi-Matt-Haig/product-reviews/6051981837/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Alt%C4%B1nc%C4%B1-Ko%C4%9Fu%C5%9F-Modern-Klasikler-Dizisi/product-reviews/6052951567/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Bir-%C4%B0dam-Mahkumunun-Son-G%C3%BCn%C3%BC/product-reviews/6053609900/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Kahve-D%C3%BCnyas%C4%B1-Filtre-250gr/product-reviews/B07XLD4Y8Q/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Eti-Karam-Kakaolu-Bitter-%C3%87ikolata/product-reviews/B08Q585CK7/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/200-Caprisun-Multi-6L%C4%B1-Po%C5%9Fet/product-reviews/B08TWS4ZHS/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/K%C4%B1z%C4%B1l-Veba-Jack-London/product-reviews/6257070783/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Nestle-Damak-Kare-65G/product-reviews/B08C3Z2PGH/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Mutlu-Olma-Sanat%C4%B1-Arthur-Schopenhauer/dp/975074120X/ref=pd_rhf_cr_s_pd_crcbs_sccl_1_4/262-6529843-1887022?pd_rd_w=5T4uc&pf_rd_p=73ff4570-b934-41c6-a427-3c991218512e&pf_rd_r=NNP0Y19GC90H6A1G4GYZ&pd_rd_r=6dc8c76b-3deb-4d2d-95ba-84a9a2f2e672&pd_rd_wg=MtRWa&pd_rd_i=975074120X&psc=1",
+              "https://www.amazon.com.tr/Ola%C4%9Fan%C3%BCst%C3%BC-Bir-Gece-Stefan-Zweig/product-reviews/6053326097/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Mecburiyet-Modern-Klasikler-Dizisi-104/product-reviews/6052951605/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews",
+              "https://www.amazon.com.tr/Satran%C3%A7-Stefan-Zweig/product-reviews/6053606111/ref=cm_cr_dp_d_show_all_btm?ie=UTF8&reviewerType=all_reviews"
+              ]
+   
     start_urls=[]
     
     # Creating list of urls to be scraped by appending page number a the end of base url
-    for i in range(1,4000):
-        start_urls.append(myBaseUrl+str(i))
+    for url in myUrls:
+        for i in range(1,300):
+            start_urls.append(url+str(i))
     # Defining a Scrapy parser
-    def parse(self, response):
-            data = response.css('#cm_cr-review_list')
+            def parse(self, response):
+                data = response.css('#cm_cr-review_list')
 
             # Collecting product star ratings
-            star_rating = data.css('.review-rating')
+                star_rating = data.css('.review-rating')
 
             # Collecting user reviews
-            comments = data.css('.review-text')
-            count = 0
+                comments = data.css('.review-text')
+                count = 0
 
             # Combining the results
-            for review in star_rating:
-                yield{'stars': ''.join(review.xpath('.//text()').extract()),
+                for review in star_rating:
+                    yield{'stars': ''.join(review.xpath('.//text()').extract()),
                       'comment': ''.join(comments[count].xpath(".//text()").extract())
-                     }
-                count=count+1
+                      }
+                    count=count+1
 
 # now, run this line in the terminal to create csv data :
-# scrapy runspider /Users/busrasebin/scrapingproject/scrapingproject/spiders/reviewspider.py -o 4000_scraped_data.csv
+# scrapy runspider /Users/busrasebin/scrapingprojecttoday/scrapingprojecttoday/spiders/amazon_review_scraping.py -o deneme1015_scraped_data.csv
 
 
 
